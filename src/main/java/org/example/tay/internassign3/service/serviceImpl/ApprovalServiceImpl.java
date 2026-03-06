@@ -10,6 +10,7 @@ import org.example.tay.internassign3.entity.Claim;
 import org.example.tay.internassign3.entityEnum.ApprovalStatus;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.exception.ConflictException;
+import org.example.tay.internassign3.exception.ResourceNotFoundException;
 import org.example.tay.internassign3.mapper.ApprovalMapper;
 import org.example.tay.internassign3.repository.ApprovalRepository;
 import org.example.tay.internassign3.repository.ClaimRepository;
@@ -74,4 +75,11 @@ public class ApprovalServiceImpl implements ApprovalService {
         return approvalMapper.toResponse(savedApproval);
     }
 
+    @Override
+    public ApprovalResponseDTO findApprovalById(String Id) {
+        log.debug("findApprovalById {}", Id);
+        return approvalRepository.findById(new ObjectId(Id))
+                .map(approvalMapper::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Approval not found with id" + Id));
+    }
 }

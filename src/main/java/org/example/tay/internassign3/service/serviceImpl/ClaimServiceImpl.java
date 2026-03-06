@@ -20,10 +20,10 @@ import org.example.tay.internassign3.service.ClaimService;
 import org.example.tay.internassign3.service.EmployeeService;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -98,12 +98,24 @@ public class ClaimServiceImpl implements ClaimService {
             throw new ConflictException("Cannot modify a claim with status: " + claim.getStatus());
         }
 
-        int index = request.getItemIndex();
-        if (index < 0 || index >= claim.getItems().size()) {
-            throw new IllegalArgumentException("Invalid item index: " + index);
-        }
+        List<ClaimItem> items = claim.getItems();
 
-        claim.getItems().get(index).setAmount(request.getAmount());
+        int index = IntStream.range(0, items.size())
+                .filter(i -> items.get(i).getId().toHexString().equals(request.getItemId()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + request.getItemId()));
+
+        ClaimItem existing = items.get(index);
+        ClaimItem updated = ClaimItem.builder()
+                .id(existing.getId())
+                .expenseDate(existing.getExpenseDate())
+                .categoryCode(existing.getCategoryCode())
+                .amount(request.getAmount())
+                .build();
+
+        items.set(index, updated);
+        claim.setItems(items);  // ← write the updated list back to claim
+
         claim.setTotalAmount(recalculateTotalAmount(claim.getItems()));
 
         Claim saved = claimRepository.save(claim);
@@ -125,14 +137,14 @@ public class ClaimServiceImpl implements ClaimService {
         log.debug("Fetching claim by id: {}", claimId);
         return claimRepository.findById(new ObjectId(claimId))
                 .map(claimMapper::toResponse)
-                .orElseThrow(() -> new RuntimeException("Claim not found with id: " + claimId));
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found with id: " + claimId));
     }
 
     @Override
     public Claim getClaimEntityById(String claimId){
         log.debug("Fetching claim entity by id: {}", claimId);
         return claimRepository.findById(new ObjectId(claimId))
-                .orElseThrow(() -> new RuntimeException("Claim not found with id: " + claimId));
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found with id: " + claimId));
     }
 
     private BigDecimal recalculateTotalAmount(List<ClaimItem> items) {
@@ -140,10 +152,4 @@ public class ClaimServiceImpl implements ClaimService {
                 .map(ClaimItem::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
-//    private Claim getClaimForEmployee(String claimId, String employeeId) {
-//        return claimRepository.findByIdAndEmployeeSnapshot_Id(new ObjectId(claimId), new ObjectId(employeeId))
-//                .orElseThrow(() -> new ResourceNotFoundException(
-//                        "Claim not found with id: " + claimId + " for employee: " + employeeId));
-//    }
 }
