@@ -3,12 +3,12 @@ package org.example.tay.internassign3.service.serviceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.example.tay.internassign3.mappers.EmployeeMapper;
 import org.example.tay.internassign3.dto.request.EmployeeRequestDTO;
 import org.example.tay.internassign3.dto.response.EmployeeResponseDTO;
 import org.example.tay.internassign3.entity.Employee;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
-import org.example.tay.internassign3.mapper.EmployeeMapper;
 import org.example.tay.internassign3.repository.EmployeeRepository;
 import org.example.tay.internassign3.service.EmployeeService;
 import org.springframework.stereotype.Service;
@@ -64,21 +64,29 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeeRepository.existsByEmployeeNumberAndIdNot(request.getEmployeeNumber(), new ObjectId(id))) {
             throw new ConflictException("Employee number already exists: " + request.getEmployeeNumber());
         }
-        if (employeeRepository.existsByEmail(request.getEmail())) {
+        // Only check for email conflicts if the email is being changed
+        if (!employee.getEmail().equals(request.getEmail())
+                && employeeRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email already exists: " + request.getEmail());
         }
 
-        Employee updated = employeeRepository.save(employee);
-        log.info("Updated employee: {}", updated.getId());
+        // Apply updates from the request DTO to the existing entity
+        employee.setEmployeeNumber(request.getEmployeeNumber());
+        employee.setFirstName(request.getFirstName());
+        employee.setLastName(request.getLastName());
+        employee.setEmail(request.getEmail());
 
-        return employeeMapper.toResponse(updated);
+        Employee saved = employeeRepository.save(employee);
+        log.info("Updated employee: {}", saved.getId());
+
+        return employeeMapper.toResponse(saved);
     }
 
     //delete employee by id
     @Override
     public void deleteEmployee(String id) {
         log.info("deleteEmployee: {}", id);
-        if (employeeRepository.existsById(new ObjectId(id))) {
+        if (!employeeRepository.existsById(new ObjectId(id))) {
             throw new ResourceNotFoundException("Employee not found with id: " + id);
         }
         employeeRepository.deleteById(new ObjectId(id));

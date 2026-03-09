@@ -13,8 +13,8 @@ import org.example.tay.internassign3.entity.Employee;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
-import org.example.tay.internassign3.mapper.ClaimMapper;
-import org.example.tay.internassign3.mapper.EmployeeMapper;
+import org.example.tay.internassign3.mappers.ClaimMapper;
+import org.example.tay.internassign3.mappers.EmployeeMapper;
 import org.example.tay.internassign3.repository.ClaimRepository;
 import org.example.tay.internassign3.service.ClaimService;
 import org.example.tay.internassign3.service.EmployeeService;
@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -40,6 +42,36 @@ public class ClaimServiceImpl implements ClaimService {
         log.debug("Creating claim for employee: {}", employeeId);
         Employee employee = employeeService.getEmployeeEntityById(employeeId);
 
+        // ── Duplicate check ──────────────────────────────────────────
+        List<Claim> existingClaims = claimRepository
+                .findPendingByEmployeeIdAndClaimTypeCode(
+                        new ObjectId(employeeId),
+                        request.getClaimType().getTypeCode()
+                );
+
+        if (request.getClaimItems() != null && !request.getClaimItems().isEmpty()) {
+            // Collect incoming (expenseDate, categoryCode) pairs
+            Set<String> incomingKeys = request.getClaimItems().stream()
+                    .map(item -> item.getExpenseDate() + "|" + item.getCategoryCode())
+                    .collect(Collectors.toSet());
+
+            boolean isDuplicate = existingClaims.stream()
+                    .flatMap(claim -> claim.getItems().stream())
+                    .anyMatch(item ->
+                            incomingKeys.contains(
+                                    item.getExpenseDate().toString() + "|" + item.getCategoryCode()
+                            )
+                    );
+
+            if (isDuplicate) {
+                throw new ConflictException(
+                        "A duplicate claim already exists for employee: " + employeeId +
+                                " with claimType: " + request.getClaimType().getTypeCode() +
+                                " containing the same expense date and category."
+                );
+            }
+        }
+        // ─────────────────────────────────────────────────────────────
 
         List<ClaimItem> items = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
@@ -59,7 +91,7 @@ public class ClaimServiceImpl implements ClaimService {
         }
 
         Claim claim = Claim.builder()
-                .employeeSnapshot(employeeMapper.toEmployeeSnapshot(employee))
+                .employeeNumber(employee.getEmployeeNumber())
                 .claimType(claimMapper.toClaimType(request.getClaimType()))
                 .items(items)
                 .totalAmount(total)
@@ -77,10 +109,19 @@ public class ClaimServiceImpl implements ClaimService {
     public ClaimResponseDTO addItemtoClaim(String claimId, ClaimItemDto itemDto) {
         log.debug("Adding item to claim: {}", claimId);
         Claim claim = claimRepository.findById(new ObjectId(claimId))
-                .orElseThrow(() -> new RuntimeException("Claim not found with id: " + claimId));
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found with id: " + claimId));
+
+        if (ClaimStatus.APPROVED.equals(claim.getStatus())
+                || ClaimStatus.REJECTED.equals(claim.getStatus())
+                || ClaimStatus.PAID.equals(claim.getStatus())) {
+            throw new ConflictException("Cannot modify a claim with status: " + claim.getStatus());
+        }
 
         ClaimItem item = claimMapper.toClaimItem(itemDto);
         item.setId(new ObjectId());
+        if (claim.getItems() == null) {
+            claim.setItems(new ArrayList<>());
+        }
         claim.getItems().add(item);
         claim.setTotalAmount(claim.getTotalAmount().add(item.getAmount()));
         claim.setLastUpdatedDate(LocalDateTime.now());

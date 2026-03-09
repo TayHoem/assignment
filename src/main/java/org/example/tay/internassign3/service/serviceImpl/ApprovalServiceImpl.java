@@ -7,15 +7,17 @@ import org.example.tay.internassign3.dto.request.ApprovalRequestDTO;
 import org.example.tay.internassign3.dto.response.ApprovalResponseDTO;
 import org.example.tay.internassign3.entity.Approval;
 import org.example.tay.internassign3.entity.Claim;
+import org.example.tay.internassign3.entity.Employee;
 import org.example.tay.internassign3.entityEnum.ApprovalStatus;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
-import org.example.tay.internassign3.mapper.ApprovalMapper;
+import org.example.tay.internassign3.mappers.ApprovalMapper;
 import org.example.tay.internassign3.repository.ApprovalRepository;
 import org.example.tay.internassign3.repository.ClaimRepository;
 import org.example.tay.internassign3.service.ApprovalService;
 import org.example.tay.internassign3.service.ClaimService;
+import org.example.tay.internassign3.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -26,6 +28,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     private final ApprovalRepository approvalRepository;
     private final ClaimRepository claimRepository;
     private final ClaimService claimService;
+    private final EmployeeService employeeService;
     private final ApprovalMapper approvalMapper;
 
     @Override
@@ -33,12 +36,12 @@ public class ApprovalServiceImpl implements ApprovalService {
         // Implementation logic to create an approval
         // This would typically involve validating the employee and claim,
         // creating an Approval entity, saving it to the repository, and returning a response DTO.
-
+        Employee employee = employeeService.getEmployeeEntityById(employeeId);
         log.debug("createApproval - start");
         // Placeholder for actual implementation
         Claim claim = claimService.getClaimEntityById(claimId);
 
-        if (!claim.getEmployeeSnapshot().getId().toHexString().equals(employeeId)) {
+        if (!claim.getEmployeeNumber().equals(employee.getEmployeeNumber())) {
             log.error("Claim does not belong to employee: {}", employeeId);
             throw new ConflictException("Claim does not belong to the specified employee: " + employeeId);
         }

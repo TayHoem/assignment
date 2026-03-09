@@ -1,6 +1,7 @@
 package org.example.tay.internassign3.dto.request;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class UpdateClaimAmountRequest {
     private String itemId;
 
     @NotNull(message = "Amount is required")
+    @Digits(integer = 10, fraction = 2, message = "Amount must have at most 2 decimal places")
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal amount;
 }

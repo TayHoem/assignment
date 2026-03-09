@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ApprovalController {
 
-    private final ApprovalService approvalService;
+    private ApprovalService approvalService;
 
     @PostMapping
     public ResponseEntity<ApprovalResponseDTO> createApproval(

@@ -9,10 +9,5 @@ import java.util.List;
 
 public interface ApprovalRepository
         extends MongoRepository<Approval, ObjectId> {
-//    List<Approval> findByClaimId(ObjectId claimId);
-//
-//    List<Approval> findByApproverId(ObjectId approverId);
-//
-//    List<Approval> findByClaimIdAndStatus(ObjectId claimId, ApprovalStatus status);
 
 }

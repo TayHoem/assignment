@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ClaimResponseDTO {
     private String id;
-    private EmployeeResponseDTO employee;
+    private String employeeNumber;
     private ClaimTypeDto claimType;
     private BigDecimal totalAmount;
     private List<ClaimItemDto> items;
