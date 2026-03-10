@@ -10,8 +10,8 @@ import org.example.tay.internassign3.entity.*;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
-import org.example.tay.internassign3.mappers.ClaimMapper;
-import org.example.tay.internassign3.mappers.EmployeeMapper;
+import org.example.tay.internassign3.mapper.ClaimMapper;
+import org.example.tay.internassign3.mapper.EmployeeMapper;
 import org.example.tay.internassign3.repository.ClaimRepository;
 import org.example.tay.internassign3.service.serviceImpl.ClaimServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,7 +87,7 @@ class ClaimServiceImplTest {
 
         claim = Claim.builder()
                 .id(claimObjectId)
-                .employeeNumber(employeeSnapshot.getEmployeeNumber())
+                .employeeSnapshot(employeeSnapshot)
                 .claimType(new ClaimType("TRAVEL", "Travel Expenses"))
                 .items(new ArrayList<>(List.of(claimItem)))
                 .totalAmount(new BigDecimal("100.00"))
@@ -151,7 +151,7 @@ class ClaimServiceImplTest {
 
             Claim emptyClaim = Claim.builder()
                     .id(claimObjectId)
-                    .employeeNumber(employeeSnapshot.getEmployeeNumber())
+                    .employeeSnapshot(employeeSnapshot)
                     .items(new ArrayList<>())
                     .totalAmount(BigDecimal.ZERO)
                     .status(ClaimStatus.PENDING)
@@ -192,7 +192,7 @@ class ClaimServiceImplTest {
 
             Claim updatedClaim = Claim.builder()
                     .id(claimObjectId)
-                    .employeeNumber(employeeSnapshot.getEmployeeNumber())
+                    .employeeSnapshot(employeeSnapshot)
                     .items(List.of(claimItem, newItem))
                     .totalAmount(new BigDecimal("150.00"))
                     .status(ClaimStatus.PENDING)
@@ -259,7 +259,7 @@ class ClaimServiceImplTest {
 
             Claim savedClaim = Claim.builder()
                     .id(claimObjectId)
-                    .employeeNumber(employeeSnapshot.getEmployeeNumber())
+                    .employeeSnapshot(employeeSnapshot)
                     .items(List.of(ClaimItem.builder()
                             .id(claimItem.getId())
                             .amount(new BigDecimal("200.00"))

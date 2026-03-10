@@ -3,7 +3,7 @@ package org.example.tay.internassign3.service.serviceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.example.tay.internassign3.mappers.EmployeeMapper;
+import org.example.tay.internassign3.mapper.EmployeeMapper;
 import org.example.tay.internassign3.dto.request.EmployeeRequestDTO;
 import org.example.tay.internassign3.dto.response.EmployeeResponseDTO;
 import org.example.tay.internassign3.entity.Employee;
@@ -64,9 +64,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeeRepository.existsByEmployeeNumberAndIdNot(request.getEmployeeNumber(), new ObjectId(id))) {
             throw new ConflictException("Employee number already exists: " + request.getEmployeeNumber());
         }
-        // Only check for email conflicts if the email is being changed
-        if (!employee.getEmail().equals(request.getEmail())
-                && employeeRepository.existsByEmail(request.getEmail())) {
+
+        if (employeeRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email already exists: " + request.getEmail());
         }
 

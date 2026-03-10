@@ -14,5 +14,7 @@ public interface EmployeeMapper {
     Employee toEntity(EmployeeRequestDTO dto);
 
     @Mapping(target = "id", expression = "java(entity.getId().toHexString())")
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "updatedDate", ignore = true)
     EmployeeResponseDTO toResponse(Employee entity);
 }

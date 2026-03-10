@@ -6,7 +6,7 @@ import org.example.tay.internassign3.entityEnum.ApprovalStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring") // the use of componentModel = "spring" allows Spring to automatically detect and manage the mapper as a bean
+@Mapper(componentModel = "spring")
 public interface ApprovalMapper {
    @Mapping(target = "id", expression = "java(entity.getId().toHexString())")
    @Mapping(target = "claimId", expression = "java(entity.getClaimId().toHexString())")

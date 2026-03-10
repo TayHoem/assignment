@@ -6,15 +6,13 @@ import org.bson.types.ObjectId;
 import org.example.tay.internassign3.dto.request.PaymentRequestDTO;
 import org.example.tay.internassign3.dto.response.PaymentResponseDTO;
 import org.example.tay.internassign3.entity.Claim;
-import org.example.tay.internassign3.entity.Employee;
 import org.example.tay.internassign3.entity.Payment;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.entityEnum.PaymentStatus;
 import org.example.tay.internassign3.exception.ConflictException;
-import org.example.tay.internassign3.mappers.PaymentMapper;
+import org.example.tay.internassign3.mapper.PaymentMapper;
 import org.example.tay.internassign3.repository.PaymentRepository;
 import org.example.tay.internassign3.service.ClaimService;
-import org.example.tay.internassign3.service.EmployeeService;
 import org.example.tay.internassign3.service.PaymentService;
 import org.springframework.stereotype.Service;
 
@@ -27,17 +25,15 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final ClaimService claimService;
-    private final EmployeeService employeeService;
     private final PaymentMapper paymentMapper;
 
     @Override
     public PaymentResponseDTO createPayment(String employeeId, String claimId, PaymentRequestDTO request) {
         log.debug("Creating payment for claim: {} employee: {}", claimId, employeeId);
-        Employee employee = employeeService.getEmployeeEntityById(employeeId);
         Claim claim = claimService.getClaimEntityById(claimId);
 
         // Validate claim belongs to employee
-        if (!claim.getEmployeeNumber().equals(employee.getEmployeeNumber())) {
+        if (!claim.getEmployeeSnapshot().getId().toHexString().equals(employeeId)) {
             throw new ConflictException("Claim does not belong to the specified employee");
         }
 
@@ -53,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment payment = Payment.builder()
                 .claimId(new ObjectId(claimId))
-                .employeeNumber(claim.getEmployeeNumber())
+                .employeeNumber(claim.getEmployeeSnapshot().getEmployeeNumber())
                 .paymentMethod(request.getPaymentMethod())
                 .paymentAmount(claim.getTotalAmount())
                 .status(PaymentStatus.PENDING)

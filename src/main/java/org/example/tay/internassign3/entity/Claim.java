@@ -23,7 +23,7 @@ public class Claim {
     @Id
     private ObjectId id;
 
-    private String employeeNumber;
+    private EmployeeSnapshot employeeSnapshot;
 
     private ClaimType claimType;
     private BigDecimal totalAmount;

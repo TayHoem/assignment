@@ -13,8 +13,8 @@ import org.example.tay.internassign3.entity.Employee;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
-import org.example.tay.internassign3.mappers.ClaimMapper;
-import org.example.tay.internassign3.mappers.EmployeeMapper;
+import org.example.tay.internassign3.mapper.ClaimMapper;
+import org.example.tay.internassign3.mapper.EmployeeMapper;
 import org.example.tay.internassign3.repository.ClaimRepository;
 import org.example.tay.internassign3.service.ClaimService;
 import org.example.tay.internassign3.service.EmployeeService;
@@ -91,7 +91,7 @@ public class ClaimServiceImpl implements ClaimService {
         }
 
         Claim claim = Claim.builder()
-                .employeeNumber(employee.getEmployeeNumber())
+                .employeeSnapshot(employeeMapper.toEmployeeSnapshot(employee))
                 .claimType(claimMapper.toClaimType(request.getClaimType()))
                 .items(items)
                 .totalAmount(total)

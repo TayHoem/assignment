@@ -6,7 +6,7 @@ import org.example.tay.internassign3.dto.response.EmployeeResponseDTO;
 import org.example.tay.internassign3.entity.Employee;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
-import org.example.tay.internassign3.mappers.EmployeeMapper;
+import org.example.tay.internassign3.mapper.EmployeeMapper;
 import org.example.tay.internassign3.repository.EmployeeRepository;
 import org.example.tay.internassign3.service.serviceImpl.EmployeeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

@@ -11,7 +11,7 @@ import org.example.tay.internassign3.entityEnum.ApprovalStatus;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
-import org.example.tay.internassign3.mappers.ApprovalMapper;
+import org.example.tay.internassign3.mapper.ApprovalMapper;
 import org.example.tay.internassign3.repository.ApprovalRepository;
 import org.example.tay.internassign3.repository.ClaimRepository;
 import org.example.tay.internassign3.service.serviceImpl.ApprovalServiceImpl;
@@ -46,6 +46,7 @@ class ApprovalServiceImplTest {
     @InjectMocks
     private ApprovalServiceImpl approvalService;
 
+
     private ObjectId claimObjectId;
     private String claimId;
     private ObjectId employeeObjectId;
@@ -76,7 +77,7 @@ class ApprovalServiceImplTest {
 
         pendingClaim = Claim.builder()
                 .id(claimObjectId)
-                .employeeNumber(snap.getEmployeeNumber())
+                .employeeSnapshot(snap)
                 .items(List.of(item))
                 .totalAmount(new BigDecimal("100.00"))
                 .status(ClaimStatus.PENDING)

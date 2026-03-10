@@ -68,61 +68,6 @@ class EmployeeControllerTest {
     }
 
     // ─────────────────────────────────────────────
-    // GET /api/employees
-    // ─────────────────────────────────────────────
-    @Nested
-    @DisplayName("GET /api/employees")
-    class GetAllEmployees {
-
-        @Test
-        @DisplayName("should return 200 with list of employees")
-        void getAllEmployees_success() throws Exception {
-            // Given
-            given(employeeService.findAllEmployees()).willReturn(List.of(employeeResponse));
-
-            // When / Then
-            mockMvc.perform(get(BASE_URL))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].employeeNumber").value("EMP001"))
-                    .andExpect(jsonPath("$[0].email").value("john.doe@example.com"));
-        }
-    }
-
-    // ─────────────────────────────────────────────
-    // GET /api/employees/{id}
-    // ─────────────────────────────────────────────
-    @Nested
-    @DisplayName("GET /api/employees/{id}")
-    class GetEmployeeById {
-
-        @Test
-        @DisplayName("should return 200 with employee when found")
-        void getById_success() throws Exception {
-            // Given
-            given(employeeService.findById(EMPLOYEE_ID)).willReturn(employeeResponse);
-
-            // When / Then
-            mockMvc.perform(get(BASE_URL + "/" + EMPLOYEE_ID))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(EMPLOYEE_ID))
-                    .andExpect(jsonPath("$.employeeNumber").value("EMP001"));
-        }
-
-        @Test
-        @DisplayName("should return 404 when employee not found")
-        void getById_notFound_returns404() throws Exception {
-            // Given
-            given(employeeService.findById(EMPLOYEE_ID))
-                    .willThrow(new ResourceNotFoundException("Employee not found with id: " + EMPLOYEE_ID));
-
-            // When / Then
-            mockMvc.perform(get(BASE_URL + "/" + EMPLOYEE_ID))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.message").value("Employee not found with id: " + EMPLOYEE_ID));
-        }
-    }
-
-    // ─────────────────────────────────────────────
     // POST /api/employees
     // ─────────────────────────────────────────────
     @Nested
@@ -190,6 +135,62 @@ class EmployeeControllerTest {
                     .andExpect(jsonPath("$.message").value("Employee number already exists: EMP001"));
         }
     }
+
+    // ─────────────────────────────────────────────
+    // GET /api/employees
+    // ─────────────────────────────────────────────
+    @Nested
+    @DisplayName("GET /api/employees")
+    class GetAllEmployees {
+
+        @Test
+        @DisplayName("should return 200 with list of employees")
+        void getAllEmployees_success() throws Exception {
+            // Given
+            given(employeeService.findAllEmployees()).willReturn(List.of(employeeResponse));
+
+            // When / Then
+            mockMvc.perform(get(BASE_URL))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0].employeeNumber").value("EMP001"))
+                    .andExpect(jsonPath("$[0].email").value("john.doe@example.com"));
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // GET /api/employees/{id}
+    // ─────────────────────────────────────────────
+    @Nested
+    @DisplayName("GET /api/employees/{id}")
+    class GetEmployeeById {
+
+        @Test
+        @DisplayName("should return 200 with employee when found")
+        void getById_success() throws Exception {
+            // Given
+            given(employeeService.findById(EMPLOYEE_ID)).willReturn(employeeResponse);
+
+            // When / Then
+            mockMvc.perform(get(BASE_URL + "/" + EMPLOYEE_ID))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(EMPLOYEE_ID))
+                    .andExpect(jsonPath("$.employeeNumber").value("EMP001"));
+        }
+
+        @Test
+        @DisplayName("should return 404 when employee not found")
+        void getById_notFound_returns404() throws Exception {
+            // Given
+            given(employeeService.findById(EMPLOYEE_ID))
+                    .willThrow(new ResourceNotFoundException("Employee not found with id: " + EMPLOYEE_ID));
+
+            // When / Then
+            mockMvc.perform(get(BASE_URL + "/" + EMPLOYEE_ID))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("Employee not found with id: " + EMPLOYEE_ID));
+        }
+    }
+
 
     // ─────────────────────────────────────────────
     // PUT /api/employees/{id}

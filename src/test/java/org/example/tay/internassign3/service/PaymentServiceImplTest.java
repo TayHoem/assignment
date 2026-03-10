@@ -10,7 +10,7 @@ import org.example.tay.internassign3.entity.Payment;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.entityEnum.PaymentStatus;
 import org.example.tay.internassign3.exception.ConflictException;
-import org.example.tay.internassign3.mappers.PaymentMapper;
+import org.example.tay.internassign3.mapper.PaymentMapper;
 import org.example.tay.internassign3.repository.PaymentRepository;
 import org.example.tay.internassign3.service.serviceImpl.PaymentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +71,7 @@ class PaymentServiceImplTest {
 
         approvedClaim = Claim.builder()
                 .id(claimObjectId)
-                .employeeNumber(snap.getEmployeeNumber())
+                .employeeSnapshot(snap)
                 .items(List.of(item))
                 .totalAmount(new BigDecimal("250.00"))
                 .status(ClaimStatus.APPROVED)

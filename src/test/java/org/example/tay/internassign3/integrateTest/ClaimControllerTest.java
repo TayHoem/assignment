@@ -7,7 +7,6 @@ import org.example.tay.internassign3.dto.ClaimTypeDto;
 import org.example.tay.internassign3.dto.request.ClaimRequestDTO;
 import org.example.tay.internassign3.dto.request.UpdateClaimAmountRequest;
 import org.example.tay.internassign3.dto.response.ClaimResponseDTO;
-import org.example.tay.internassign3.dto.response.EmployeeResponseDTO;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.GlobalExceptionHandler;
 import org.example.tay.internassign3.exception.ResourceNotFoundException;
