@@ -50,7 +50,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = Payment.builder()
                 .claimId(new ObjectId(claimId))
                 .employeeNumber(claim.getEmployeeSnapshot().getEmployeeNumber())
-                .paymentMethod(request.getPaymentMethod())
+                .paymentMethod(paymentMapper.toPaymentMethod(request.getPaymentMethod()))
                 .paymentAmount(claim.getTotalAmount())
                 .status(PaymentStatus.PENDING)
                 .createdDate(LocalDateTime.now())

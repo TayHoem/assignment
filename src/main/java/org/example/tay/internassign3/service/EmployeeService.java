@@ -17,6 +17,8 @@ public interface EmployeeService {
     //update employee details
     EmployeeResponseDTO updateEmployee(String id, EmployeeRequestDTO request);
 
+    EmployeeResponseDTO findEmployeesByEmployeeNumber(String employeeNumber);
+
     //delete employee by id
     void deleteEmployee(String id);
 

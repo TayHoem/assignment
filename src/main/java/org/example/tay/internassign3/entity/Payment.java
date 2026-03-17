@@ -2,6 +2,7 @@ package org.example.tay.internassign3.entity;
 
 import lombok.*;
 import org.bson.types.ObjectId;
+import org.example.tay.internassign3.entityEnum.PaymentMethod;
 import org.example.tay.internassign3.entityEnum.PaymentStatus;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -14,8 +15,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "payments")
@@ -25,7 +24,7 @@ public class Payment {
     @Indexed
     private ObjectId claimId;
     private String employeeNumber;
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
     private BigDecimal paymentAmount;
     private PaymentStatus status;
 

@@ -83,7 +83,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should create employee successfully when no conflicts exist")
-        void shouldCreateEmployeeSuccessfully() {
+        void sendRequest_createEmployee_shouldCreateEmployeeSuccessfully() {
             // Given
             given(employeeRepository.existsByEmployeeNumber("EMP001")).willReturn(false);
             given(employeeRepository.existsByEmail("alice.tan@example.com")).willReturn(false);
@@ -103,7 +103,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when employee number already exists")
-        void shouldThrowConflictWhenEmployeeNumberDuplicate() {
+        void sendRequest_createEmployee_shouldThrowConflictWhenEmployeeNumberDuplicate() {
             // Given
             given(employeeRepository.existsByEmployeeNumber("EMP001")).willReturn(true);
 
@@ -117,7 +117,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when email already exists")
-        void shouldThrowConflictWhenEmailDuplicate() {
+        void sendRequest_createEmployee_shouldThrowConflictWhenEmailDuplicate() {
             // Given
             given(employeeRepository.existsByEmployeeNumber("EMP001")).willReturn(false);
             given(employeeRepository.existsByEmail("alice.tan@example.com")).willReturn(true);
@@ -140,7 +140,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should return list of all employees")
-        void shouldReturnAllEmployees() {
+        void sendRequest_findAllEmployees_shouldReturnAllEmployees() {
             // Given
             given(employeeRepository.findAll()).willReturn(List.of(employee));
             given(employeeMapper.toResponse(employee)).willReturn(responseDTO);
@@ -155,7 +155,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should return empty list when no employees exist")
-        void shouldReturnEmptyListWhenNoEmployees() {
+        void sendRequest_findAllEmployees_shouldReturnEmptyListWhenNoEmployees() {
             // Given
             given(employeeRepository.findAll()).willReturn(List.of());
 
@@ -176,7 +176,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should return employee when found by valid ID")
-        void shouldReturnEmployeeById() {
+        void sendRequest_findAllEmployees_shouldReturnEmployeeById() {
             // Given
             given(employeeRepository.findById(employeeObjectId)).willReturn(Optional.of(employee));
             given(employeeMapper.toResponse(employee)).willReturn(responseDTO);
@@ -191,7 +191,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when employee not found")
-        void shouldThrowNotFoundWhenEmployeeMissing() {
+        void sendRequest_findAllEmployees_shouldThrowNotFoundWhenEmployeeMissing() {
             // Given
             given(employeeRepository.findById(employeeObjectId)).willReturn(Optional.empty());
 
@@ -211,7 +211,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should update employee successfully when no conflicts")
-        void shouldUpdateEmployeeSuccessfully() {
+        void sendRequest_updateEmployee_shouldUpdateEmployeeSuccessfully() {
             // Given
             given(employeeRepository.findById(employeeObjectId)).willReturn(Optional.of(employee));
             given(employeeRepository.existsByEmployeeNumberAndIdNot("EMP001", employeeObjectId)).willReturn(false);
@@ -229,7 +229,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when updating non-existent employee")
-        void shouldThrowNotFoundWhenUpdatingMissingEmployee() {
+        void sendRequest_updateEmployee_shouldThrowNotFoundWhenUpdatingMissingEmployee() {
             // Given
             given(employeeRepository.findById(employeeObjectId)).willReturn(Optional.empty());
 
@@ -240,7 +240,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when new employee number is taken by another employee")
-        void shouldThrowConflictWhenEmployeeNumberTakenByAnother() {
+        void sendRequest_updateEmployee_shouldThrowConflictWhenEmployeeNumberTakenByAnother() {
             // Given
             given(employeeRepository.findById(employeeObjectId)).willReturn(Optional.of(employee));
             given(employeeRepository.existsByEmployeeNumberAndIdNot("EMP001", employeeObjectId)).willReturn(true);
@@ -261,7 +261,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should return Employee entity when found")
-        void shouldReturnEmployeeEntity() {
+        void sendRequest_getEmployeeEntityById_shouldReturnEmployeeEntity() {
             // Given
             given(employeeRepository.findById(employeeObjectId)).willReturn(Optional.of(employee));
 
@@ -275,7 +275,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when entity not found")
-        void shouldThrowWhenEntityNotFound() {
+        void sendRequest_getEmployeeEntityById_shouldThrowWhenEntityNotFound() {
             // Given
             given(employeeRepository.findById(employeeObjectId)).willReturn(Optional.empty());
 
@@ -294,7 +294,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should delete employee when employee exists")
-        void shouldDeleteWhenEmployeeExists() {
+        void sendRequest_deleteEmployee_shouldDeleteWhenEmployeeExists() {
             // Given — employee IS found in DB
             given(employeeRepository.existsById(employeeObjectId)).willReturn(true);
             willDoNothing().given(employeeRepository).deleteById(employeeObjectId);
@@ -308,7 +308,7 @@ class EmployeeServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when employee does NOT exist")
-        void shouldThrowWhenEmployeeMissing() {
+        void sendRequest_deleteEmployee_shouldThrowWhenEmployeeMissing() {
             // Given — employee is NOT in DB
             given(employeeRepository.existsById(employeeObjectId)).willReturn(false);
 

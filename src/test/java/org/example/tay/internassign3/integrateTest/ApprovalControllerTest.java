@@ -1,6 +1,6 @@
 package org.example.tay.internassign3.integrateTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.example.tay.internassign3.controller.ApprovalController;
 import org.example.tay.internassign3.dto.request.ApprovalRequestDTO;
 import org.example.tay.internassign3.dto.response.ApprovalResponseDTO;
@@ -12,12 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,15 +38,12 @@ class ApprovalControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Mock
-    private MongoTemplate mongoTemplate;
-
     @MockitoBean
     private ApprovalService approvalService;
 
     private static final String EMPLOYEE_ID = "507f1f77bcf86cd799439011";
     private static final String CLAIM_ID    = "507f1f77bcf86cd799439022";
-    private static final String APPROVER_ID = "507f1f77bcf86cd799439099";
+    private static final String APPROVER_ID = "507f1f77bcf86cd799439033";
     private static final String APPROVAL_ID = "507f1f77bcf86cd799439088";
     private static final String BASE_URL =
             "/api/employees/" + EMPLOYEE_ID + "/claims/" + CLAIM_ID + "/approvals";

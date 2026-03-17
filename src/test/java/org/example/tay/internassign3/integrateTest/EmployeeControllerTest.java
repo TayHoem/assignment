@@ -1,6 +1,6 @@
 package org.example.tay.internassign3.integrateTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.example.tay.internassign3.controller.EmployeeController;
 import org.example.tay.internassign3.dto.request.EmployeeRequestDTO;
 import org.example.tay.internassign3.dto.response.EmployeeResponseDTO;
@@ -172,7 +172,7 @@ class EmployeeControllerTest {
 
             // When / Then
             mockMvc.perform(get(BASE_URL + "/" + EMPLOYEE_ID))
-                    .andExpect(status().isCreated())
+                    .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(EMPLOYEE_ID))
                     .andExpect(jsonPath("$.employeeNumber").value("EMP001"));
         }

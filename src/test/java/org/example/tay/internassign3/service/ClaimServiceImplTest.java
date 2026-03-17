@@ -4,7 +4,6 @@ import org.bson.types.ObjectId;
 import org.example.tay.internassign3.dto.ClaimItemDto;
 import org.example.tay.internassign3.dto.ClaimTypeDto;
 import org.example.tay.internassign3.dto.request.ClaimRequestDTO;
-import org.example.tay.internassign3.dto.request.UpdateClaimAmountRequest;
 import org.example.tay.internassign3.dto.response.ClaimResponseDTO;
 import org.example.tay.internassign3.entity.*;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
@@ -110,7 +109,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should create claim with items and correct total amount")
-        void shouldCreateClaimWithItemsAndCorrectTotal() {
+        void sendRequest_CreateClaim_shouldCreateClaimWithItemsAndCorrectTotal() {
             // Given
             ClaimTypeDto claimTypeDto = new ClaimTypeDto("TRAVEL", "Travel Expenses");
             ClaimItemDto itemDto = new ClaimItemDto("2024-01-15", new BigDecimal("150.00"), "TRAVEL");
@@ -142,7 +141,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should create claim with zero total when no items provided")
-        void shouldCreateClaimWithZeroTotalWhenNoItems() {
+        void sendRequest_CreateClaim_shouldCreateClaimWithZeroTotalWhenNoItems() {
             // Given
             ClaimRequestDTO request = ClaimRequestDTO.builder()
                     .claimType(new ClaimTypeDto("MEDICAL", "Medical"))
@@ -181,7 +180,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should add item and update total amount correctly")
-        void shouldAddItemAndUpdateTotal() {
+        void sendRequest_addItemtoClaim_shouldAddItemAndUpdateTotal() {
             // Given
             ClaimItemDto newItemDto = new ClaimItemDto("2024-02-01", new BigDecimal("50.00"), "MEALS");
             ClaimItem newItem = ClaimItem.builder()
@@ -214,7 +213,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when claim not found")
-        void shouldThrowWhenClaimNotFound() {
+        void sendRequest_addItemtoClaim_shouldThrowWhenClaimNotFound() {
             // Given
             ClaimItemDto itemDto = new ClaimItemDto("2024-02-01", new BigDecimal("50.00"), "MEALS");
             given(claimRepository.findById(claimObjectId)).willReturn(Optional.empty());
@@ -227,7 +226,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim is already APPROVED/REJECTED/PAID")
-        void shouldThrowConflictWhenClaimIsNotPending() {
+        void sendRequest_addItemtoClaim_shouldThrowConflictWhenClaimIsNotPending() {
             // Given
             claim.setStatus(ClaimStatus.APPROVED);
             ClaimItemDto itemDto = new ClaimItemDto("2024-02-01", new BigDecimal("50.00"), "MEALS");
@@ -249,7 +248,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should update item amount and recalculate claim total")
-        void shouldUpdateItemAmountAndRecalculateTotal() {
+        void sendRequest_updateClaimAmount_shouldUpdateItemAmountAndRecalculateTotal() {
             // Given
             String itemId = claimItem.getId().toHexString();
             UpdateClaimAmountRequest request = UpdateClaimAmountRequest.builder()
@@ -285,7 +284,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim is already APPROVED")
-        void shouldThrowConflictWhenClaimIsApproved() {
+        void sendRequest_updateClaimAmount_shouldThrowConflictWhenClaimIsApproved() {
             // Given
             claim.setStatus(ClaimStatus.APPROVED);
             UpdateClaimAmountRequest request = new UpdateClaimAmountRequest("someItemId", new BigDecimal("100.00"));
@@ -300,7 +299,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim is PAID")
-        void shouldThrowConflictWhenClaimIsPaid() {
+        void sendRequest_updateClaimAmount_shouldThrowConflictWhenClaimIsPaid() {
             // Given
             claim.setStatus(ClaimStatus.PAID);
             UpdateClaimAmountRequest request = new UpdateClaimAmountRequest("someItemId", new BigDecimal("100.00"));
@@ -315,7 +314,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when item ID not found in claim")
-        void shouldThrowWhenItemNotFound() {
+        void sendRequest_updateClaimAmount_shouldThrowWhenItemNotFound() {
             // Given
             UpdateClaimAmountRequest request = new UpdateClaimAmountRequest(
                     new ObjectId().toHexString(), new BigDecimal("100.00"));
@@ -338,7 +337,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should return list of all claims")
-        void shouldReturnAllClaims() {
+        void sendRequest_GetAllClaim_shouldReturnAllClaims() {
             // Given
             given(claimRepository.findAll()).willReturn(List.of(claim));
             given(claimMapper.toResponse(claim)).willReturn(claimResponseDTO);
@@ -352,7 +351,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should return empty list when no claims exist")
-        void shouldReturnEmptyListWhenNoClaims() {
+        void sendRequest_GetAllClaim_shouldReturnEmptyListWhenNoClaims() {
             // Given
             given(claimRepository.findAll()).willReturn(List.of());
 
@@ -373,7 +372,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should return Claim entity when found")
-        void shouldReturnClaimEntity() {
+        void sendRequest_GetClaimById_shouldReturnClaimEntity() {
             // Given
             given(claimRepository.findById(claimObjectId)).willReturn(Optional.of(claim));
 
@@ -387,7 +386,7 @@ class ClaimServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when claim not found")
-        void shouldThrowWhenClaimNotFound() {
+        void sendRequest_GetClaimById_shouldThrowWhenClaimNotFound() {
             // Given
             given(claimRepository.findById(claimObjectId)).willReturn(Optional.empty());
 

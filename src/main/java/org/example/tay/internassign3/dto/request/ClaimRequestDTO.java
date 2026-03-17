@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ClaimRequestDTO {
     //Request DTO for creating/updating claims
-    @NotNull(message = "Claim Type is required")
+    //@NotNull(message = "Claim Type is required")
     @Valid
     private ClaimTypeDto claimType;
 

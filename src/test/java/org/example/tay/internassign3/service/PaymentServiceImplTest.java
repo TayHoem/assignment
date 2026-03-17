@@ -81,7 +81,7 @@ class PaymentServiceImplTest {
                 .id(new ObjectId())
                 .claimId(claimObjectId)
                 .employeeNumber("EMP001")
-                .paymentMethod("BANK_TRANSFER")
+                .paymentMethod(paymentMapper.toPaymentMethod("BANK_TRANSFER"))
                 .paymentAmount(new BigDecimal("250.00"))
                 .status(PaymentStatus.PENDING)
                 .createdDate(LocalDateTime.now())
@@ -106,7 +106,7 @@ class PaymentServiceImplTest {
 
         @Test
         @DisplayName("should create payment successfully for an approved claim")
-        void shouldCreatePaymentForApprovedClaim() {
+        void sendRequest_createPayment_shouldCreatePaymentForApprovedClaim() {
             // Given
             PaymentRequestDTO request = new PaymentRequestDTO("BANK_TRANSFER");
 
@@ -129,7 +129,7 @@ class PaymentServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim does not belong to employee")
-        void shouldThrowWhenClaimNotOwnedByEmployee() {
+        void sendRequest_createPayment_shouldThrowWhenClaimNotOwnedByEmployee() {
             // Given
             String otherEmployeeId = new ObjectId().toHexString();
             PaymentRequestDTO request = new PaymentRequestDTO("BANK_TRANSFER");
@@ -144,7 +144,7 @@ class PaymentServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim is PENDING (not yet approved)")
-        void shouldThrowWhenClaimIsPending() {
+        void sendRequest_createPayment_shouldThrowWhenClaimIsPending() {
             // Given
             approvedClaim.setStatus(ClaimStatus.PENDING);
             PaymentRequestDTO request = new PaymentRequestDTO("BANK_TRANSFER");
@@ -160,7 +160,7 @@ class PaymentServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim is REJECTED")
-        void shouldThrowWhenClaimIsRejected() {
+        void sendRequest_createPayment_shouldThrowWhenClaimIsRejected() {
             // Given
             approvedClaim.setStatus(ClaimStatus.REJECTED);
             PaymentRequestDTO request = new PaymentRequestDTO("BANK_TRANSFER");
@@ -175,7 +175,7 @@ class PaymentServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when payment already exists for claim")
-        void shouldThrowWhenDuplicatePayment() {
+        void sendRequest_createPayment_shouldThrowWhenDuplicatePayment() {
             // Given
             PaymentRequestDTO request = new PaymentRequestDTO("BANK_TRANSFER");
 
@@ -198,7 +198,7 @@ class PaymentServiceImplTest {
 
         @Test
         @DisplayName("should return list of all payments")
-        void shouldReturnAllPayments() {
+        void sendRequest_getPayment_shouldReturnAllPayments() {
             // Given
             given(paymentRepository.findAll()).willReturn(List.of(savedPayment));
             given(paymentMapper.toResponse(savedPayment)).willReturn(paymentResponse);
@@ -213,7 +213,7 @@ class PaymentServiceImplTest {
 
         @Test
         @DisplayName("should return empty list when no payments exist")
-        void shouldReturnEmptyList() {
+        void sendRequest_getPayment_shouldReturnEmptyList() {
             // Given
             given(paymentRepository.findAll()).willReturn(List.of());
 

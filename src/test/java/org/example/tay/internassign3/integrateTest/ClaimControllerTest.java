@@ -1,11 +1,10 @@
 package org.example.tay.internassign3.integrateTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.example.tay.internassign3.controller.ClaimController;
 import org.example.tay.internassign3.dto.ClaimItemDto;
 import org.example.tay.internassign3.dto.ClaimTypeDto;
 import org.example.tay.internassign3.dto.request.ClaimRequestDTO;
-import org.example.tay.internassign3.dto.request.UpdateClaimAmountRequest;
 import org.example.tay.internassign3.dto.response.ClaimResponseDTO;
 import org.example.tay.internassign3.exception.ConflictException;
 import org.example.tay.internassign3.exception.GlobalExceptionHandler;

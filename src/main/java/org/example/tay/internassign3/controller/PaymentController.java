@@ -1,5 +1,6 @@
 package org.example.tay.internassign3.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.tay.internassign3.dto.request.PaymentRequestDTO;
@@ -22,7 +23,7 @@ public class PaymentController {
     public ResponseEntity<PaymentResponseDTO> createPayment(
             @PathVariable String employeeId,
             @PathVariable String claimId,
-            @RequestBody PaymentRequestDTO paymentRequest
+            @Valid @RequestBody PaymentRequestDTO paymentRequest
     ) {
         log.debug("Received request to create payment for employee: {} claim: {}", employeeId, claimId);
         PaymentResponseDTO response = paymentService.createPayment(employeeId, claimId, paymentRequest);

@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "approvals")
@@ -22,7 +20,7 @@ public class Approval {
     private ObjectId id;
     @Indexed
     private ObjectId claimId;
-    private String approverId;
+    private ObjectId approverId;
     private ApprovalStatus status;
     private String comments;
     @CreatedDate

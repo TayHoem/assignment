@@ -3,10 +3,7 @@ package org.example.tay.internassign3.service;
 import org.bson.types.ObjectId;
 import org.example.tay.internassign3.dto.request.ApprovalRequestDTO;
 import org.example.tay.internassign3.dto.response.ApprovalResponseDTO;
-import org.example.tay.internassign3.entity.Approval;
-import org.example.tay.internassign3.entity.Claim;
-import org.example.tay.internassign3.entity.ClaimItem;
-import org.example.tay.internassign3.entity.EmployeeSnapshot;
+import org.example.tay.internassign3.entity.*;
 import org.example.tay.internassign3.entityEnum.ApprovalStatus;
 import org.example.tay.internassign3.entityEnum.ClaimStatus;
 import org.example.tay.internassign3.exception.ConflictException;
@@ -41,6 +38,7 @@ class ApprovalServiceImplTest {
     @Mock private ApprovalRepository approvalRepository;
     @Mock private ClaimRepository claimRepository;
     @Mock private ClaimService claimService;
+    @Mock private EmployeeService employeeService;
     @Mock private ApprovalMapper approvalMapper;
 
     @InjectMocks
@@ -51,9 +49,12 @@ class ApprovalServiceImplTest {
     private String claimId;
     private ObjectId employeeObjectId;
     private String employeeId;
+    private ObjectId approvalObjectId;
+    private String approvalId;
     private Claim pendingClaim;
     private Approval savedApproval;
     private ApprovalResponseDTO approvalResponse;
+    private Employee approver;
 
     @BeforeEach
     void setUp() {
@@ -61,11 +62,20 @@ class ApprovalServiceImplTest {
         claimId          = claimObjectId.toHexString();
         employeeObjectId = new ObjectId();
         employeeId       = employeeObjectId.toHexString();
+        approvalObjectId = new ObjectId();
+        approvalId       = approvalObjectId.toHexString();
+
 
         EmployeeSnapshot snap = EmployeeSnapshot.builder()
                 .id(employeeObjectId)
                 .employeeNumber("EMP001")
                 .firstName("Alice")
+                .build();
+
+         approver = Employee.builder()
+                .id(approvalObjectId)
+                .employeeNumber("AP001")
+                .firstName("John")
                 .build();
 
         ClaimItem item = ClaimItem.builder()
@@ -86,7 +96,7 @@ class ApprovalServiceImplTest {
         savedApproval = Approval.builder()
                 .id(new ObjectId())
                 .claimId(claimObjectId)
-                .approverId("MGR001")
+                .approverId(new ObjectId(approvalId))
                 .status(ApprovalStatus.APPROVED)
                 .actionDate(LocalDateTime.now())
                 .build();
@@ -94,7 +104,7 @@ class ApprovalServiceImplTest {
         approvalResponse = ApprovalResponseDTO.builder()
                 .id(savedApproval.getId().toHexString())
                 .claimId(claimId)
-                .approverId("MGR001")
+                .approverId(approvalId)
                 .status("APPROVED")
                 .build();
     }
@@ -108,14 +118,15 @@ class ApprovalServiceImplTest {
 
         @Test
         @DisplayName("should create APPROVED approval and update claim status to APPROVED")
-        void shouldCreateApprovalAndSetClaimApproved() {
+        void getRequest_CreateApprovalAndSetClaimApproved() {
             // Given
             ApprovalRequestDTO request = ApprovalRequestDTO.builder()
-                    .approverId("MGR001")
+                    .approverId(approvalId)
                     .status("APPROVED")
                     .comments("Looks good")
                     .build();
 
+            given(employeeService.getEmployeeEntityById(approvalId)).willReturn(approver); // ← ADD THIS
             given(claimService.getClaimEntityById(claimId)).willReturn(pendingClaim);
             given(approvalMapper.toApprovalStatus("APPROVED")).willReturn(ApprovalStatus.APPROVED);
             given(approvalRepository.save(any(Approval.class))).willReturn(savedApproval);
@@ -133,10 +144,10 @@ class ApprovalServiceImplTest {
 
         @Test
         @DisplayName("should create REJECTED approval and update claim status to REJECTED")
-        void shouldCreateApprovalAndSetClaimRejected() {
+        void sendRequest_CreateApprovalAndSetClaimRejected() {
             // Given
             ApprovalRequestDTO request = ApprovalRequestDTO.builder()
-                    .approverId("MGR001")
+                    .approverId(approvalId)
                     .status("REJECTED")
                     .comments("Missing receipts")
                     .build();
@@ -150,6 +161,7 @@ class ApprovalServiceImplTest {
             ApprovalResponseDTO rejectedResponse = ApprovalResponseDTO.builder()
                     .status("REJECTED").build();
 
+            given(employeeService.getEmployeeEntityById(approvalId)).willReturn(approver); // ← ADD THIS
             given(claimService.getClaimEntityById(claimId)).willReturn(pendingClaim);
             given(approvalMapper.toApprovalStatus("REJECTED")).willReturn(ApprovalStatus.REJECTED);
             given(approvalRepository.save(any(Approval.class))).willReturn(rejectedApproval);
@@ -166,12 +178,13 @@ class ApprovalServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim does not belong to the employee")
-        void shouldThrowConflictWhenClaimNotOwnedByEmployee() {
+        void sendRequest_createApproval_ThrowConflictWhenClaimNotOwnedByEmployee() {
             // Given
             String differentEmployeeId = new ObjectId().toHexString();
             ApprovalRequestDTO request = ApprovalRequestDTO.builder()
-                    .approverId("MGR001").status("APPROVED").build();
+                    .approverId(approvalId).status("APPROVED").build();
 
+            given(employeeService.getEmployeeEntityById(approvalId)).willReturn(approver); // ← ADD THIS
             given(claimService.getClaimEntityById(claimId)).willReturn(pendingClaim);
 
             // When / Then
@@ -182,12 +195,13 @@ class ApprovalServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim is already APPROVED")
-        void shouldThrowConflictWhenClaimAlreadyApproved() {
+        void sendRequest_CreateApproval_ThrowConflictWhenClaimAlreadyApproved() {
             // Given
             pendingClaim.setStatus(ClaimStatus.APPROVED);
             ApprovalRequestDTO request = ApprovalRequestDTO.builder()
-                    .approverId("MGR001").status("APPROVED").build();
+                    .approverId(approvalId).status("APPROVED").build();
 
+            given(employeeService.getEmployeeEntityById(approvalId)).willReturn(approver); // ← ADD THIS
             given(claimService.getClaimEntityById(claimId)).willReturn(pendingClaim);
 
             // When / Then
@@ -198,18 +212,62 @@ class ApprovalServiceImplTest {
 
         @Test
         @DisplayName("should throw ConflictException when claim has no items")
-        void shouldThrowConflictWhenClaimHasNoItems() {
+        void sendRequest_createApproval_ThrowConflictWhenClaimHasNoItems() {
             // Given
             pendingClaim.setItems(List.of());
             ApprovalRequestDTO request = ApprovalRequestDTO.builder()
-                    .approverId("MGR001").status("APPROVED").build();
+                    .approverId(approvalId).status("APPROVED").build();
 
+            given(employeeService.getEmployeeEntityById(approvalId)).willReturn(approver); // ← ADD THIS
             given(claimService.getClaimEntityById(claimId)).willReturn(pendingClaim);
 
             // When / Then
             assertThatThrownBy(() -> approvalService.createApproval(employeeId, claimId, request))
                     .isInstanceOf(ConflictException.class)
                     .hasMessageContaining("no items");
+        }
+
+        // ──  approver-not-found logic ──────────────
+        @Test
+        @DisplayName("should throw ResourceNotFoundException when approverId does not exist")
+        void sendRequest_createApproval_ThrowNotFoundWhenApproverNotFound() {
+            // Given
+            ApprovalRequestDTO request = ApprovalRequestDTO.builder()
+                    .approverId(approvalId).status("APPROVED").build();
+
+            given(employeeService.getEmployeeEntityById(approvalId))
+                    .willThrow(new ResourceNotFoundException("Approver not found"));
+
+            // When / Then
+            assertThatThrownBy(() -> approvalService.createApproval(employeeId, claimId, request))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessageContaining("Approver not found");
+
+            // claimService should never be reached
+            then(claimService).should(never()).getClaimEntityById(any());
+        }
+
+        // ── Self-approval guard ───────────────────────
+        @Test
+        @DisplayName("should throw ConflictException when approver is the same as the claim employee")
+        void sendRequest_createApproval_ThrowConflictWhenSelfApproval() {
+            // Given — approverId == employeeId (self-approval)
+            ApprovalRequestDTO request = ApprovalRequestDTO.builder()
+                    .approverId(employeeId)   // same as the claim owner
+                    .status("APPROVED").build();
+
+            Employee claimOwnerAsApprover = Employee.builder()
+                    .id(employeeObjectId)
+                    .employeeNumber("EMP001")
+                    .build();
+
+            given(employeeService.getEmployeeEntityById(employeeId)).willReturn(claimOwnerAsApprover);
+            given(claimService.getClaimEntityById(claimId)).willReturn(pendingClaim);
+
+            // When / Then
+            assertThatThrownBy(() -> approvalService.createApproval(employeeId, claimId, request))
+                    .isInstanceOf(ConflictException.class)
+                    .hasMessageContaining(employeeId);
         }
     }
 
@@ -222,7 +280,7 @@ class ApprovalServiceImplTest {
 
         @Test
         @DisplayName("should return ApprovalResponseDTO when approval found")
-        void shouldReturnApprovalWhenFound() {
+        void sendRequest_getApproval_shouldReturnApprovalWhenFound() {
             // Given
             String approvalId = savedApproval.getId().toHexString();
             given(approvalRepository.findById(savedApproval.getId())).willReturn(Optional.of(savedApproval));
@@ -238,7 +296,7 @@ class ApprovalServiceImplTest {
 
         @Test
         @DisplayName("should throw ResourceNotFoundException when approval not found")
-        void shouldThrowWhenApprovalNotFound() {
+        void sendRequest_getApproval_shouldThrowWhenApprovalNotFound() {
             // Given
             String nonExistentId = new ObjectId().toHexString();
             given(approvalRepository.findById(any(ObjectId.class))).willReturn(Optional.empty());

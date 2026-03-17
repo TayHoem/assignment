@@ -1,6 +1,6 @@
 package org.example.tay.internassign3.integrateTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.example.tay.internassign3.controller.PaymentController;
 import org.example.tay.internassign3.dto.request.PaymentRequestDTO;
 import org.example.tay.internassign3.dto.response.PaymentResponseDTO;
@@ -82,7 +82,7 @@ class PaymentControllerTest {
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(PAYMENT_ID))
                     .andExpect(jsonPath("$.paymentMethod").value("BANK_TRANSFER"))
                     .andExpect(jsonPath("$.paymentAmount").value(100.00))

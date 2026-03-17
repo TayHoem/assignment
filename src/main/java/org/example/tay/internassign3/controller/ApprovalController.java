@@ -1,5 +1,6 @@
 package org.example.tay.internassign3.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.tay.internassign3.dto.request.ApprovalRequestDTO;
@@ -22,7 +23,7 @@ public class ApprovalController {
     public ResponseEntity<ApprovalResponseDTO> createApproval(
             @PathVariable String employeeId,
             @PathVariable String claimId,
-            @RequestBody ApprovalRequestDTO approvalRequestDTO
+            @Valid @RequestBody ApprovalRequestDTO approvalRequestDTO
     ) {
         log.info("Creating approval for employeeId: {}, claimId: {}", employeeId, claimId);
         ApprovalResponseDTO response = approvalService.createApproval(employeeId, claimId, approvalRequestDTO);

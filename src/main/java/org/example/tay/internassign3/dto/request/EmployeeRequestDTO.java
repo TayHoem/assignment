@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeRequestDTO {
-    @NotBlank(message = "Employee number is required")
+    //@NotBlank(message = "Employee number is required")
     private String employeeNumber;
 
-    @NotBlank(message = "First name is required")
+    //@NotBlank(message = "First name is required")
     @Size(max = 30, message = "First Name cannot exceed 30 characters")
     @Pattern(
             regexp = "^[A-Za-z ]+$",
@@ -25,7 +25,7 @@ public class EmployeeRequestDTO {
     )
     private String firstName;
 
-    @Size(max = 50, message = "Name cannot exceed 30 characters")
+    //@Size(max = 30, message = "Name cannot exceed 30 characters")
     @Pattern(
             regexp = "^[A-Za-z ]+$",
             message = "Last Name must contain only letters and spaces"
@@ -33,7 +33,7 @@ public class EmployeeRequestDTO {
     @NotBlank(message = "Last name is required")
     private String lastName;
 
-    @NotBlank(message = "Email is required")
+    //@NotBlank(message = "Email is required")
     @Email(message = "Email must be valid @")
     private String email;
 }

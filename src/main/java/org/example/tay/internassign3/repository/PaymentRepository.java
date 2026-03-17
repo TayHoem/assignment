@@ -14,5 +14,5 @@ public interface PaymentRepository
     //List<Payment> findByEmployeeNumber(String employeeNumber);
     //List<Payment> findByStatus(PaymentStatus status);
 
-    Boolean existsByClaimId(Object claimId);
+    boolean existsByClaimId(ObjectId claimId);
 }

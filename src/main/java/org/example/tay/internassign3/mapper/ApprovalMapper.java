@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 public interface ApprovalMapper {
    @Mapping(target = "id", expression = "java(entity.getId().toHexString())")
    @Mapping(target = "claimId", expression = "java(entity.getClaimId().toHexString())")
+   @Mapping(target = "approverId", expression = "java(entity.getApproverId().toHexString())")
    ApprovalResponseDTO toResponse(Approval entity);
 
    //make String Status to Enum ApprovalStatus
